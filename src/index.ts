@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import * as captureWebsite from 'capture-website';
 import fs from 'fs';
+import temp from 'temp';
 
 require('dotenv').config();
 
@@ -9,7 +10,7 @@ const app = express();
 app.use(cors())
 let port = process.env.PORT;
 if (port === undefined || port === '') {
-  port = 80 as any;
+  port = 8080 as any;
 }
 
 app.listen(port, () => {
@@ -21,7 +22,8 @@ app.get('/', (req, res) => {
 });
 
 app.get('/spy', (req, res) =>  {
-    captureWebsite.file('https://finviz.com/map.ashx', 'screenshot.png', {
+    const imageName = temp.path({suffix: '.png'});
+    captureWebsite.file('https://finviz.com/map.ashx', imageName, {
         width: 1200,
         height: 2000,
         timeout: 90000,
@@ -33,19 +35,20 @@ app.get('/spy', (req, res) =>  {
           ],
         },
       }).then( ()=> {
-        const img = fs.readFileSync('screenshot.png', { encoding: 'base64'})
+        const img = fs.readFileSync(imageName, { encoding: 'base64'})
 
         res.writeHead(200, {
             'Content-Type': 'image/png',
             'Content-Length': img.length
         });
         res.end(img); 
-        fs.unlink('screenshot.png', () => {});
+        fs.unlink(imageName, () => {});
       })
 });
 
 app.get('/etf', (req, res) =>  {
-    captureWebsite.file('https://finviz.com/map.ashx?t=etf', 'screenshot.png', {
+    const imageName = temp.path({suffix: '.png'});
+    captureWebsite.file('https://finviz.com/map.ashx?t=etf', imageName, {
         width: 1200,
         height: 2000,
         timeout: 90000,
@@ -57,13 +60,13 @@ app.get('/etf', (req, res) =>  {
           ],
         },
       }).then( ()=> {
-        const img = fs.readFileSync('screenshot.png', { encoding: 'base64'})
+        const img = fs.readFileSync(imageName, { encoding: 'base64'})
 
         res.writeHead(200, {
             'Content-Type': 'image/png',
             'Content-Length': img.length
         });
         res.end(img); 
-        fs.unlink('screenshot.png', () => {});
+        fs.unlink(imageName, () => {});
       })
 });
