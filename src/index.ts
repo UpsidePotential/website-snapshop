@@ -44,8 +44,6 @@ app.get('/spy', (req, res) =>  {
         res.end(img); 
         fs.unlink(imageName, () => {});
       })
-
-      asdf
 });
 
 app.get('/etf', (req, res) =>  {
