@@ -9,7 +9,7 @@ const app = express();
 app.use(cors())
 let port = process.env.PORT;
 if (port === undefined || port === '') {
-  port = 8000 as any;
+  port = 80 as any;
 }
 
 app.listen(port, () => {
